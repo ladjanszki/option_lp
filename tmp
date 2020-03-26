@@ -1,0 +1,63 @@
+Problem:    
+Rows:       10
+Columns:    21
+Non-zeros:  48
+Status:     OPTIMAL
+Objective:  OBJ = 0.09 (MINimum)
+
+   No.   Row name   St   Activity     Lower bound   Upper bound    Marginal
+------ ------------ -- ------------- ------------- ------------- -------------
+     1 SF00000001   NS             0            -0             =       -0.9675 
+     2 SF00000002   NS             0            -0             =       -0.0325 
+     3 SF00000003   NS             0            -0             =       -0.3025 
+     4 SF00000004   NS             0            -0             =        -0.335 
+     5 SF00000005   NS    -0.0909091    -0.0909091             =         -0.33 
+     6 SF00000006   NS      -1.84615      -1.84615             =       -0.0325 
+     7 NN00000001   NL             0             0                      0.3025 
+     8 NN00000002   NL             0             0                       0.335 
+     9 NN00000003   NL             0             0                        0.33 
+    10 NN00000004   NL             0             0                      0.0325 
+
+   No. Column name  St   Activity     Lower bound   Upper bound    Marginal
+------ ------------ -- ------------- ------------- ------------- -------------
+     1 th0_0        B       -0.24087                             
+     2 th0_1        NF             0                                     < eps
+     3 th0_2        B        0.33087                             
+     4 th1_0        B      -0.201284                             
+     5 th1_1        B       0.376891                             
+     6 th1_2        B     -0.0444182                             
+     7 th2_0        NF             0                                     < eps
+     8 th2_1        NF             0                                     < eps
+     9 th2_2        B       0.292683                             
+    10 th3_0        NF             0                                     < eps
+    11 th3_1        NF             0                                     < eps
+    12 th3_2        B              0                             
+    13 th4_0        NF             0                                     < eps
+    14 th4_1        NF             0                                     < eps
+    15 th4_2        B              0                             
+    16 th5_0        NF             0                                     < eps
+    17 th5_1        NF             0                                     < eps
+    18 th5_2        B              0                             
+    19 th6_0        NF             0                                     < eps
+    20 th6_1        NF             0                                     < eps
+    21 th6_2        B              0                             
+
+Karush-Kuhn-Tucker optimality conditions:
+
+KKT.PE: max.abs.err = 4.44e-16 on row 2
+        max.rel.err = 2.22e-16 on row 10
+        High quality
+
+KKT.PB: max.abs.err = 0.00e+00 on row 0
+        max.rel.err = 0.00e+00 on row 0
+        High quality
+
+KKT.DE: max.abs.err = 1.11e-16 on column 3
+        max.rel.err = 4.66e-17 on column 5
+        High quality
+
+KKT.DB: max.abs.err = 4.44e-16 on column 2
+        max.rel.err = 4.44e-16 on column 2
+        High quality
+
+End of output
