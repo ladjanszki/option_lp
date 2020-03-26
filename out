@@ -3,23 +3,29 @@ Rows:       4
 Columns:    6
 Non-zeros:  12
 Status:     OPTIMAL
-Objective:  der = 33.33333333 (MINimum)
+Objective:  OBJ = 33.33333333 (MINimum)
 
    No.   Row name   St   Activity     Lower bound   Upper bound    Marginal
 ------ ------------ -- ------------- ------------- ------------- -------------
-     1 onfin1       NS          -100          -100             =     -0.333333 
-     2 onfin2       NS             0             0             =     -0.666667 
-     3 nemne3       NL             0             0                    0.333333 
-     4 nemne4       NL             0             0                    0.666667 
+     1 SF00000001   NS          -100          -100             =     -0.333333 
+     2 SF00000002   NS             0            -0             =     -0.666667 
+     3 NN00000001   NL             0             0                    0.333333 
+     4 NN00000002   NL             0             0                    0.666667 
 
    No. Column name  St   Activity     Lower bound   Upper bound    Marginal
 ------ ------------ -- ------------- ------------- ------------- -------------
-     1 th0_0        B       -33.3333                             
-     2 th0_1        B       0.666667                             
-     3 th1_0        NF             0                                     < eps
-     4 th1_1        B              0                             
-     5 th2_0        NF             0                                     < eps
-     6 th2_1        B              0                             
+     1 th00000000_00000000
+                    B       -33.3333                             
+     2 th00000000_00000001
+                    B       0.666667                             
+     3 th00000001_00000000
+                    NF             0                                     < eps
+     4 th00000001_00000001
+                    B              0                             
+     5 th00000002_00000000
+                    NF             0                                     < eps
+     6 th00000002_00000001
+                    B              0                             
 
 Karush-Kuhn-Tucker optimality conditions:
 

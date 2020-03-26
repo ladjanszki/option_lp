@@ -1,6 +1,6 @@
 \Harom vilagallapot, ket ertekpapir, normalizalva
 min																						
-der:	+1 th0_0	+100 th0_1	+0 th1_0	+0 th1_1	+0 th2_0	+0 th2_1	
+der:	+1 th0_0	+100 th0_1
 																						
 subject to																						
 
