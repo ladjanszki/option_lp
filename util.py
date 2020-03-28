@@ -17,13 +17,13 @@ class StateData:
         return StateData([x / self.secPrice[0] for x in self.secPrice], self.payOff / self.secPrice[0])
 
 
-def stateDataIterator(sd):
+def stateDataIterator(sd, mean, sigma):
     ''' 
     The function returns a valid child world state of the one in the argument
     '''
 
     # Change of the price of stocks
-    newSecPrice = [0.5 * 100 + 0.5 * x + np.random.lognormal(2, 1) - np.exp(2.5)  for x in sd.data.secPrice]
+    newSecPrice = [0.5 * 100 + 0.5 * x + np.random.lognormal(mean, sigma) - np.exp(2.5)  for x in sd.data.secPrice]
  
     # Cash always 1
     newSecPrice[0] = 1
