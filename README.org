@@ -1,0 +1,20 @@
+* Option pricing with linear programming
+This repository contains the code and documentation for the "Option procong wiht lineat programming" project.
+The project were created for an Operations Research course that was helg in the 2020 fall semester at the Budapest Corvinus University
+
+** Disclamer
+This is not a proper Python project and never intended to be a Python package
+
+** Reproducibility
+The development and usage environment can be recreated by conda from the committed .yml file. 
+For more infomration on this plese consult the conda manual
+
+* Usage
+The entry point of the program is the option_lp.py file.
+This shows the usage of the tree generator and the lp generator.
+After the file have been invoked a linear solver (testeg with glpsol under Ubuntu 18.04) have to be fed the generaqted input files
+All generated input files should be in the /inputs directory.
+
+* Testing 
+Testing can be carried out by invoking the test.py file
+This is not PyPi compliant testin only a validation of the working 
