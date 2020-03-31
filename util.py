@@ -9,6 +9,8 @@ class StateData:
         self.secPrice = secPrice
         self.payOff = payOff
 
+        self.representation = str(secPrice) + ' ' + str(payOff)
+
     def __str__(self):
         return "Prices: " + str(self.secPrice) + " PayOff: " + str(self.payOff)
 
@@ -64,6 +66,54 @@ def normalizeTree(tree):
 
     return outTree
 
+def levelBuilder(tree, parentId, subtreeTuple, logNormalMean, logNormalSigma):
+    for nChild in range(subtreeTuple[0]):
+
+        actId = str(parentId) + '/' + str(nChild)
+        tree.create_node(str(actId), str(actId), parent=str(parentId), data=stateDataIterator(tree[str(parentId)], logNormalMean, logNormalSigma))
+
+        # If note the leaf level, call level builder recursively
+        if len(subtreeTuple) > 1:
+            levelBuilder(tree, actId, subtreeTuple[1:], logNormalMean, logNormalSigma)
+
+def treeGenerator(childrenPerLevel, initSecPrice, logNormalMean, logNormalSigma):
+    ''' 
+    Wrapper function for tree generation
+
+    childrenPerLevel: 
+    Tuple for number of branches on each level.
+    The length of the tuple gives the depth of the tree
+
+    initialData:
+    Initial security prices
+    The zeroth element is considered cash and left unchanged in tree generation
+    
+
+    '''
+
+    # Check if childrenPerLevel is proper tuple
+    if not isinstance(childrenPerLevel, tuple):
+        print('ERROR')
+        print('Children per level variable is not a tuple')
+        print('Proper one length tuple in Python example is')
+        print('(10, ) NOT (10)')
+        print('Exiting...')
+        exit(1)
+
+    # Creating a tree
+    tree = Tree()
+
+    # Hardcoded root node ID
+    rootId = '0'
+    
+    # Adding root node
+    tree.create_node(str(rootId), str(rootId), data=StateData(initSecPrice, 0))  
+    
+    levelBuilder(tree, str(rootId), childrenPerLevel, logNormalMean, logNormalSigma)
+    
+
+    return tree    
+
 def treeToLp(tree, outFileName):
     '''
     Function to transform a price tree into a linear programming input
@@ -86,10 +136,11 @@ def treeToLp(tree, outFileName):
     # Adding root node variables
     for idx, sec in enumerate(rootNode.data.secPrice):
         #objFunc.append("{0:+20.16f} th{1:08d}_{2:08d} ".format(float(sec), int(rootNode.tag), int(idx)))
-        objFunc.append("{0:+20.16f} th{1:d}_{2:d} ".format(float(sec), int(rootNode.tag), int(idx)))
+        #objFunc.append("{0:+20.16f} th{1:d}_{2:d} ".format(float(sec), int(rootNode.tag), int(idx)))
+        objFunc.append("{0:+20.16f} th{1}__{2} ".format(float(sec), str(rootNode.tag), int(idx)))
         #Saving variable names for bounds section
         #allVarNames.append("th{0:08d}_{1:08d} free".format(int(rootNode.tag), int(idx)))
-        allVarNames.append("th{0:d}_{1:d} free".format(int(rootNode.tag), int(idx)))
+        allVarNames.append("th{0}__{1} free".format(str(rootNode.tag), int(idx)))
         
     # Traversing the tree for constrints
     sfNum = 1 # Index for the self financing constraint
@@ -117,15 +168,18 @@ def treeToLp(tree, outFileName):
                 #Adding Parent variables
                 for idx, sec in enumerate(actCh.data.secPrice):
                     #actLine.append("{0:+20.16f} th{1:08d}_{2:08d} ".format(-float(sec), int(actNode.tag), int(idx)))
-                    actLine.append("{0:+20.16f} th{1:d}_{2:d} ".format(-float(sec), int(actNode.tag), int(idx)))
+                    #actLine.append("{0:+20.16f} th{1:d}_{2:d} ".format(-float(sec), int(actNode.tag), int(idx)))
+                    actLine.append("{0:+20.16f} th{1}__{2} ".format(-float(sec), str(actNode.tag), int(idx)))
     
                 #Adding child variables
                 for idx, sec in enumerate(actCh.data.secPrice):
                     #actLine.append("{0:+20.16f} th{1:08d}_{2:08d} ".format(float(sec), int(actCh.tag), int(idx)))
-                    actLine.append("{0:+20.16f} th{1:d}_{2:d} ".format(float(sec), int(actCh.tag), int(idx)))
+                    #actLine.append("{0:+20.16f} th{1:d}_{2:d} ".format(float(sec), int(actCh.tag), int(idx)))
+                    actLine.append("{0:+20.16f} th{1}__{2} ".format(float(sec), str(actCh.tag), int(idx)))
                     #Saving variable names for bounds section
                     #allVarNames.append("th{0:08d}_{1:08d} free".format(int(actCh.tag), int(idx)))
-                    allVarNames.append("th{0:d}_{1:d} free".format(int(actCh.tag), int(idx)))
+                    #allVarNames.append("th{0:d}_{1:d} free".format(int(actCh.tag), int(idx)))
+                    allVarNames.append("th{0}__{1} free".format(str(actCh.tag), int(idx)))
     
                 #Adding the right hand side
                 #TODO: Shouldnt write -0
@@ -151,7 +205,8 @@ def treeToLp(tree, outFileName):
             #Adding Parent variables
             for idx, sec in enumerate(actNode.data.secPrice):
                 #actLine.append("{0:+20.16f} th{1:08d}_{2:08d} ".format(float(sec), int(actNode.tag), int(idx)))
-                actLine.append("{0:+20.16f} th{1:d}_{2:d} ".format(float(sec), int(actNode.tag), int(idx)))
+                #actLine.append("{0:+20.16f} th{1:d}_{2:d} ".format(float(sec), int(actNode.tag), int(idx)))
+                actLine.append("{0:+20.16f} th{1}__{2} ".format(float(sec), str(actNode.tag), int(idx)))
     
     
             #Adding the right hand side
