@@ -76,7 +76,7 @@ def levelBuilder(tree, parentId, subtreeTuple, logNormalMean, logNormalSigma):
         if len(subtreeTuple) > 1:
             levelBuilder(tree, actId, subtreeTuple[1:], logNormalMean, logNormalSigma)
 
-def treeGenerator(childrenPerLevel, initSecPrice, logNormalMean, logNormalSigma):
+def treeGenerator(childrenPerLevel = (), initSecPrice = [], logNormalMean = 0, logNormalSigma = 1):
     ''' 
     Wrapper function for tree generation
 

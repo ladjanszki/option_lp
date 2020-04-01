@@ -1,60 +1,49 @@
 from treelib import Node, Tree
+from subprocess import PIPE, run
 import numpy as np
 
 import util
 
 
-# We always have the same random numbers
+# Reproducible random numbers
 np.random.seed(0)
 
-
-# HF1
-# arg: filename
-# arg: startPrices (list)
-# arg: branches on levels (tuple)
-# arg: mean, sigma (random generator parameters)
-lpFileName = 'inputs/hf1.lp'
-# lpFileName = 'debug.lp'
-
-# tree = Tree()
-# tree.create_node("0", "0", data=util.StateData([1, 100, 100, 100], 0))  # root node
-#
-# for idx in range(1,101):
-#     tree.create_node('0/' + str(idx), '0/' + str(idx), parent="0", data=util.stateDataIterator(tree['0'], 2, 1))
-
-# New tree builder
-tree = util.treeGenerator((100, ), [1, 100, 100, 100], 2, 1)
-# tree = util.treeGenerator((100, 100), [1, 100, 100, 100], 2, 1)
+# HW1
+task_id = 'hw1'
+inputFileName = 'inputs/' + task_id + '.lp'
+outFileName = 'outs/' + task_id + '.out'
+tree = util.treeGenerator(childrenPerLevel = (100, ), initSecPrice = [1, 100, 100, 100], logNormalMean = 2, logNormalSigma = 1) 
+util.calculatePayoffs(tree) 
+util.treeToLp(tree, inputFileName) # Generating the GLPK input
 
 
-# tree.show(data_property='representation')
-# tree.show(data_property="secPrice")
-# tree.show(data_property="payOff")
+command = ['glpsol', '--lp', inputFileName, '-o',  outputFileName]
+result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+#print(result.returncode, result.stdout, result.stderr)
 
-# Postprocessing a tree for payoffs
-util.calculatePayoffs(tree)
+exit(0)
 
-# tree.show(data_property='representation')
-# tree.show(data_property="secPrice")
-# tree.show(data_property="payOff")
-tree.show()
 
-# Generating the GLPK input
-util.treeToLp(tree, lpFileName)
+# HW2
+lpFileName = 'inputs/hw2.lp'
+tree = util.treeGenerator(childrenPerLevel = (1000, ), initSecPrice = [1, 100, 100, 100], logNormalMean = 2, logNormalSigma = 1) 
+util.calculatePayoffs(tree) 
+util.treeToLp(tree, lpFileName) # Generating the GLPK input
 
-##### HF2
-#tree = Tree()
-#tree.create_node("0", "0", data=util.StateData([1, 100, 100, 100], 0))  # root node
-#
-#for idx in range(1,1001):
-#    tree.create_node(str(idx), str(idx), parent="0", data=util.stateDataIterator(tree['0']))
-#
-## Postprocessing a tree for payoffs
-#util.calculatePayoffs(tree)
-#
-## Generating the GLPK input
-#util.treeToLp(tree, 'inputs/hf2.lp')
-#
+# HW3
+lpFileName = 'inputs/hw3.lp'
+tree = util.treeGenerator(childrenPerLevel = (10000, ), initSecPrice = [1, 100, 100, 100], logNormalMean = 2, logNormalSigma = 1) 
+util.calculatePayoffs(tree) 
+util.treeToLp(tree, lpFileName) # Generating the GLPK input
+ 
+# HW4
+lpFileName = 'inputs/hw4.lp'
+tree = util.treeGenerator(childrenPerLevel = (100000, ), initSecPrice = [1, 100, 100, 100], logNormalMean = 2, logNormalSigma = 1) 
+util.calculatePayoffs(tree) 
+util.treeToLp(tree, lpFileName) # Generating the GLPK input
+ 
+
+
 ##### HF3
 #tree = Tree()
 #tree.create_node("0", "0", data=util.StateData([1, 100, 100, 100], 0))  # root node
