@@ -1,0 +1,68 @@
+% Created 2020-04-02 cs 15:00
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{István Ladjánszki}
+\date{\today}
+\title{Option pricing with linear programming}
+\hypersetup{
+ pdfauthor={István Ladjánszki},
+ pdftitle={Option pricing with linear programming},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.2.2 (Org mode 9.1.14)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+
+\section{Option pricing with linear programming}
+\label{sec:org10d96f3}
+This repository contains the code and documentation for the "Option procong wiht lineat programming" project.
+The project were created for an Operations Research course that was helg in the 2020 fall semester at the Budapest Corvinus University
+
+\subsection{Disclamer}
+\label{sec:orgbf78583}
+This is not a proper Python project and never intended to be a Python package
+
+\subsection{Reproducibility}
+\label{sec:orgda5b5a6}
+The development and usage environment can be recreated by conda from the committed .yml file. 
+For more infomration on this plese consult the conda manual
+
+\section{The problem}
+\label{sec:org29f037f}
+In the original problem we have a market which has three stocks and cash. The stocks are risky assets which means they have a prices in the different world states that depend on random variable \(\xi\). The time evaluation of the \$i\$-th stock can be calulated by the equation below. We assume the price processes are normalized and discounted in a sense that cash always has a price of one. 
+
+\begin{equation}
+S_{t+1}^i = 50 + 0.5 * S_{t}^i + \xi^i - \exp(-2.5)
+\end{equation}
+
+The code in this repository gives the proce of an exchange option for different world settings and maturites. The exchange option gives the right for the owner to exchange one of the first stock to one of the second stock at maturity. In practice the payoff of these options are usually payed as the difference in cash. The starting price of all stocks equal to 100 and \(\xi\) is a lognormal random variable with mean 1 and standard deviation of 2.
+
+\subsection{One period different number of branches}
+\label{sec:orgcbb7f6a}
+\section{Usage}
+\label{sec:org71d872d}
+The entry point of the program is the option\(_{\text{lp.py}}\) file.
+This shows the usage of the tree generator and the lp generator.
+After the file have been invoked a linear solver (testeg with glpsol under Ubuntu 18.04) have to be fed the generaqted input files
+All generated input files should be in the /inputs directory.
+
+\section{Testing}
+\label{sec:org17e587d}
+Testing can be carried out by invoking the test.py file
+This is not PyPi compliant testin only a validation of the working 
+\end{document}

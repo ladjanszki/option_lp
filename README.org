@@ -1,20 +1,38 @@
-* Option pricing with linear programming
-This repository contains the code and documentation for the "Option procong wiht lineat programming" project.
-The project were created for an Operations Research course that was helg in the 2020 fall semester at the Budapest Corvinus University
+#+TITLE: Option pricing with linear programming
+#+AUTHOR: István Ladjánszki
+#+OPTIONS: toc:nil
+
+* Introduction 
+This document is about the repository option_lp that contains the code and documentation for the Option procong wiht lineat programming project. The project was implemented for the Operations Research course that was held in the 2020 fall semester at the Budapest Corvinus University.
 
 ** Disclamer
-This is not a proper Python project and never intended to be a Python package
+This is not a properly structured Python project and never intended to be a Python package. The main aiming was to write it as simple as possible but still answer all the questions in the original project sheet.
+
+** Usage 
+There are several main files in the root directory which have to be run for all the question to be answered. For convenience purposes I committed all the generated inputs (lp files), all the GLPK outputs and all the csv files containig the timings and the option prices into the results folder. This is against the standards for Python but this is a school project as well.
+
+By running the files hw<number>.py we generate the lp files and run the GLPK solver (the GLPK solver is also invked from Python by using the subprocess package). The GLPK solver will generate both the output file and the terminal output into the results directory. By parsing these files a report is also generated in csv format by the same name. The report usually has the price of the exchange option and the wall time and CPU time of the GLPK solver subprocess.
+ 
+As an example the measurements for the first subproblem can be carried out by invoking the command below if the proper environment have been built. More on the environment in the Reproducibility and environment subsection. 
+#+begin_src bash 
+python hw1.py
+#+end_src
 
 ** Reproducibility
-The development and usage environment can be recreated by conda from the committed .yml file. 
-For more infomration on this plese consult the conda manual
+The development and usage environment can be recreated by conda from the committed .yml file. For more infomration on this plese consult the conda manual.
 
-* Usage
-The entry point of the program is the option_lp.py file.
-This shows the usage of the tree generator and the lp generator.
-After the file have been invoked a linear solver (testeg with glpsol under Ubuntu 18.04) have to be fed the generaqted input files
-All generated input files should be in the /inputs directory.
+* The problem 
+In the original problem we have a market which has three stocks and cash. The stocks are risky assets which means they have a prices in the different world states that depend on random variable $\xi$. The time evaluation of the $i$-th stock can be calulated by the equation below. We assume the price processes are normalized and discounted in a sense that cash always has a price of one. 
+
+\begin{equation}
+S_{t+1}^i = 50 + 0.5 * S_{t}^i + \xi^i - \exp(-2.5)
+\end{equation}
+
+The code in this repository gives the proce of an exchange option for different world settings and maturites. The exchange option gives the right for the owner to exchange one of the first stock to one of the second stock at maturity. In practice the payoff of these options are usually payed as the difference in cash. The starting price of all stocks equal to 100 and $\xi$ is a lognormal random variable with mean 1 and standard deviation of 2.
+
+** One period different number of branches 
+In the first part there is only one interval till maturity. We have to calculate the proice of the exchange option in the cases where the price tree has 100, 1000, 10000 and 100000 leaf branches. The output for this are the files have the prefix hw1. 
+
 
 * Testing 
-Testing can be carried out by invoking the test.py file
-This is not PyPi compliant testin only a validation of the working 
+Testing can be carried out by invoking the test.py file This is not PyPi compliant testing method, only a validation of the working. Some of the output from the testing phase can be found in the examples directory. 
