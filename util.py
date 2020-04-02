@@ -1,5 +1,8 @@
 from treelib import Node, Tree
+import subprocess as sp
 import numpy as np
+import re
+import time
 
 class StateData:
     '''
@@ -78,7 +81,7 @@ def levelBuilder(tree, parentId, subtreeTuple, logNormalMean, logNormalSigma):
 
 def treeGenerator(childrenPerLevel = (), initSecPrice = [], logNormalMean = 0, logNormalSigma = 1):
     ''' 
-    Wrapper function for tree generation
+    Function for tree generation
 
     childrenPerLevel: 
     Tuple for number of branches on each level.
@@ -135,11 +138,8 @@ def treeToLp(tree, outFileName):
     
     # Adding root node variables
     for idx, sec in enumerate(rootNode.data.secPrice):
-        #objFunc.append("{0:+20.16f} th{1:08d}_{2:08d} ".format(float(sec), int(rootNode.tag), int(idx)))
-        #objFunc.append("{0:+20.16f} th{1:d}_{2:d} ".format(float(sec), int(rootNode.tag), int(idx)))
         objFunc.append("{0:+20.16f} th{1}__{2} ".format(float(sec), str(rootNode.tag), int(idx)))
         #Saving variable names for bounds section
-        #allVarNames.append("th{0:08d}_{1:08d} free".format(int(rootNode.tag), int(idx)))
         allVarNames.append("th{0}__{1} free".format(str(rootNode.tag), int(idx)))
         
     # Traversing the tree for constrints
@@ -167,22 +167,15 @@ def treeToLp(tree, outFileName):
     
                 #Adding Parent variables
                 for idx, sec in enumerate(actCh.data.secPrice):
-                    #actLine.append("{0:+20.16f} th{1:08d}_{2:08d} ".format(-float(sec), int(actNode.tag), int(idx)))
-                    #actLine.append("{0:+20.16f} th{1:d}_{2:d} ".format(-float(sec), int(actNode.tag), int(idx)))
                     actLine.append("{0:+20.16f} th{1}__{2} ".format(-float(sec), str(actNode.tag), int(idx)))
     
                 #Adding child variables
                 for idx, sec in enumerate(actCh.data.secPrice):
-                    #actLine.append("{0:+20.16f} th{1:08d}_{2:08d} ".format(float(sec), int(actCh.tag), int(idx)))
-                    #actLine.append("{0:+20.16f} th{1:d}_{2:d} ".format(float(sec), int(actCh.tag), int(idx)))
                     actLine.append("{0:+20.16f} th{1}__{2} ".format(float(sec), str(actCh.tag), int(idx)))
                     #Saving variable names for bounds section
-                    #allVarNames.append("th{0:08d}_{1:08d} free".format(int(actCh.tag), int(idx)))
-                    #allVarNames.append("th{0:d}_{1:d} free".format(int(actCh.tag), int(idx)))
                     allVarNames.append("th{0}__{1} free".format(str(actCh.tag), int(idx)))
     
                 #Adding the right hand side
-                #TODO: Shouldnt write -0
                 actLine.append("= {0:+20.16f}".format(-float(actCh.data.payOff)))
     
                 # Adding line to list for later file assembly
@@ -204,8 +197,6 @@ def treeToLp(tree, outFileName):
     
             #Adding Parent variables
             for idx, sec in enumerate(actNode.data.secPrice):
-                #actLine.append("{0:+20.16f} th{1:08d}_{2:08d} ".format(float(sec), int(actNode.tag), int(idx)))
-                #actLine.append("{0:+20.16f} th{1:d}_{2:d} ".format(float(sec), int(actNode.tag), int(idx)))
                 actLine.append("{0:+20.16f} th{1}__{2} ".format(float(sec), str(actNode.tag), int(idx)))
     
     
@@ -237,4 +228,35 @@ def treeToLp(tree, outFileName):
         myfile.write('\n')
         myfile.write('\n')
         myfile.write('END\n')
+
+def measurement(taskId = '', childrenPerLevel = (), initSecPrice = [], logNormalMean = 0, logNormalSigma = 1):
+    #taskId = 'hw1'
+    inputFileName = 'inputs/' + taskId + '.lp'
+    outFileName = 'outs/' + taskId + '.out'
+    tree = treeGenerator(childrenPerLevel, initSecPrice, logNormalMean, logNormalSigma) 
+    calculatePayoffs(tree) 
+    treeToLp(tree, inputFileName) # Generating the GLPK input
+    
+    
+    # Profiling info
+    wallStart = time.time()
+    cpuStart = time.process_time()
+
+    # Call GLPK as new process
+    command = ['glpsol', '--lp', inputFileName, '-o',  outFileName]
+    result = sp.run(command, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
+    #print(result.returncode, result.stdout, result.stderr)
+
+
+    wallTime = time.time() - wallStart
+    cpuTime = time.process_time() - cpuStart
+    
+    with open(outFileName, encoding='utf-8') as outFile:
+        data = outFile.read()
+    
+    resultLine = re.search('Objective.*', data) # Get the line with the keyword 'Objective'
+    optionPrice = re.search('[0-9]+\.[0-9]+', resultLine.group()) #Get the float number
+
+    return optionPrice.group(), wallTime, cpuTime
+ 
  
