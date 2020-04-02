@@ -229,10 +229,9 @@ def treeToLp(tree, outFileName):
         myfile.write('\n')
         myfile.write('END\n')
 
-def measurement(taskId = '', childrenPerLevel = (), initSecPrice = [], logNormalMean = 0, logNormalSigma = 1):
-    #taskId = 'hw1'
-    inputFileName = 'inputs/' + taskId + '.lp'
-    outFileName = 'outs/' + taskId + '.out'
+def measurement(path = '', taskId = '', childrenPerLevel = (), initSecPrice = [], logNormalMean = 0, logNormalSigma = 1):
+    inputFileName = path + taskId + '.lp'
+    outFileName = path + taskId + '.out'
     tree = treeGenerator(childrenPerLevel, initSecPrice, logNormalMean, logNormalSigma) 
     calculatePayoffs(tree) 
     treeToLp(tree, inputFileName) # Generating the GLPK input
@@ -245,8 +244,21 @@ def measurement(taskId = '', childrenPerLevel = (), initSecPrice = [], logNormal
     # Call GLPK as new process
     command = ['glpsol', '--lp', inputFileName, '-o',  outFileName]
     result = sp.run(command, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
-    #print(result.returncode, result.stdout, result.stderr)
+    
+    # Writing the errorcode
+    with open(path + taskId + '_error_code.txt', 'w+') as ec:
+        ec.write(str(result.returncode))
+    #print(str(result.returncode))
 
+    # Writing content of stdout
+    with open(path + taskId + '_stdout.txt', 'w+') as stdout:
+        stdout.write(str(result.stdout))
+    #print(str(result.stdout))
+
+    # Writing content of stderr
+    with open(path + taskId + '_stderr.txt', 'w+') as stderr:
+        stderr.write(str(result.stdout))
+    #print(str(result.stdout))
 
     wallTime = time.time() - wallStart
     cpuTime = time.process_time() - cpuStart
@@ -257,6 +269,9 @@ def measurement(taskId = '', childrenPerLevel = (), initSecPrice = [], logNormal
     resultLine = re.search('Objective.*', data) # Get the line with the keyword 'Objective'
     optionPrice = re.search('[0-9]+\.[0-9]+', resultLine.group()) #Get the float number
 
-    return optionPrice.group(), wallTime, cpuTime
+    if optionPrice is None:
+        return ['ERROR', wallTime, cpuTime]
+    else:
+        return [optionPrice.group(), wallTime, cpuTime]
  
  
