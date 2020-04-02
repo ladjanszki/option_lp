@@ -1,0 +1,24 @@
+GLPSOL: GLPK LP/MIP Solver, v4.65
+Parameter(s) specified in the command line:
+ --lp results/hw3/hw3_2.lp -o results/hw3/hw3_2.out
+Reading problem data from 'results/hw3/hw3_2.lp'...
+16420 rows, 33684 columns, 99360 non-zeros
+50113 lines were read
+GLPK Simplex Optimizer, v4.65
+16420 rows, 33684 columns, 99360 non-zeros
+Preprocessing...
+16420 rows, 33684 columns, 99360 non-zeros
+Scaling...
+ A: min|aij| =  1.000e+00  max|aij| =  3.913e+02  ratio =  3.913e+02
+GM: min|aij| =  5.683e-01  max|aij| =  1.760e+00  ratio =  3.096e+00
+EQ: min|aij| =  3.230e-01  max|aij| =  1.000e+00  ratio =  3.096e+00
+Constructing initial basis...
+Size of triangular part is 16401
+      0: obj =   0.000000000e+00 inf =   6.981e+04 (4182)
+   4180: obj =   1.255086713e+02 inf =   8.596e+02 (21) 41
+   4201: obj =   2.384534685e+02 inf =   0.000e+00 (0)
+*  5378: obj =   1.224807655e+01 inf =   3.029e-13 (0) 12
+OPTIMAL LP SOLUTION FOUND
+Time used:   6.7 secs
+Memory used: 35.8 Mb (37552765 bytes)
+Writing basic solution to 'results/hw3/hw3_2.out'...

@@ -1,0 +1,25 @@
+GLPSOL: GLPK LP/MIP Solver, v4.65
+Parameter(s) specified in the command line:
+ --lp results/hw3/hw3_0.lp -o results/hw3/hw3_0.out
+Reading problem data from 'results/hw3/hw3_0.lp'...
+280 rows, 624 columns, 1740 non-zeros
+913 lines were read
+GLPK Simplex Optimizer, v4.65
+280 rows, 624 columns, 1740 non-zeros
+Preprocessing...
+280 rows, 624 columns, 1740 non-zeros
+Scaling...
+ A: min|aij| =  1.000e+00  max|aij| =  2.112e+02  ratio =  2.112e+02
+GM: min|aij| =  7.745e-01  max|aij| =  1.291e+00  ratio =  1.667e+00
+EQ: min|aij| =  5.999e-01  max|aij| =  1.000e+00  ratio =  1.667e+00
+Constructing initial basis...
+Size of triangular part is 276
+      0: obj =   0.000000000e+00 inf =   9.120e+02 (74)
+     78: obj =   5.739409268e+01 inf =   0.000e+00 (0)
+*    94: obj =  -2.288840486e+01 inf =   0.000e+00 (26)
+LP HAS UNBOUNDED PRIMAL SOLUTION
+glp_simplex: unable to recover undefined or non-optimal solution
+If you need actual output for non-optimal solution, use --nopresol
+Time used:   0.0 secs
+Memory used: 0.7 Mb (703289 bytes)
+Writing basic solution to 'results/hw3/hw3_0.out'...
