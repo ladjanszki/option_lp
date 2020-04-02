@@ -270,8 +270,8 @@ def measurement(path = '', taskId = '', childrenPerLevel = (), initSecPrice = []
     optionPrice = re.search('[0-9]+\.[0-9]+', resultLine.group()) #Get the float number
 
     if optionPrice is None:
-        return ['ERROR', wallTime, cpuTime]
+        return ['ERROR', wallTime, cpuTime, logNormalMean, logNormalSigma, path + taskId]
     else:
-        return [optionPrice.group(), wallTime, cpuTime]
+        return [optionPrice.group(), wallTime, cpuTime, logNormalMean, logNormalSigma, path + taskId]
  
  
