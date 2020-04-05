@@ -1,0 +1,122 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+
+\author{István Ladjánszki}
+\date{\today}
+\title{Option pricing with linear programming}
+
+\begin{document}
+
+\maketitle
+
+\section{Option pricing with linear programming}
+This document summarises the code and results for the "Option priceing wiht lineat programming" project. The project were created for an Operations Research course that was helg in the 2020 fall semester at the Budapest Corvinus University. The code and the documentation were written by the author and of this document, István Ladjánszki and is distributed under the MIT licence. The code, the digested results, the source for this document and other supplemetary material can be found in the project repository on GitHub, at \texttt{https://github.com/ladjanszki/option\_lp.git}.
+
+\subsection{Reproducibility}
+The development and run environment can be recreated by conda from the committed \texttt{environment.yml} file by invoking the 
+\begin{verbatim}
+conda env create -f environment.yml
+\end{verbatim}
+from the linux command line.  For more infomration on this plese consult the conda manual. The run environment also requires the GLPK linear solver to be installed. The code was tested and all results were generated under \texttt{Ubuntu 18.04 LTS}. The code should work under \texttt{Windows} because of Python's cross platform compatibility but no test was done in this way. The raw output for the code (e.g. generated lp files and GLPK solver output files are not committed to the repository since this is bad practice. All input and ouput can be reproduced by runing the code. In case of a 1000000 variable problem the generated lp file was a few hundred megabites in size and should not be part of a git repository.
+
+\subsection{Code structure}
+The main files which have to be run are called \texttt{hw\{1-4\}.py} and all has the code for a given subsection in the Problem section. All helper code are stored in the \texttt{util.py} file. The main structure is the following. First a tree is generated with three stocks and cash as the zeroth asset. Based on this we have four assets in the problem. When building the tree the prices for each asset generated from the parent node prices by the \ref{eq:price} equaiton. After building the tree is traversed in depth first way. Then an input file for the GLPK solver (glpsol under linux) is generated in the following way. 
+\begin{itemize}
+\item The objective function has the starting portfolio amounts and have to be minimized.
+\item A self financing constraint added for every pair of world states between portfolio restructuring is possible.
+\item A non negativity constraint is added for every leaf node.
+\item A variable entry is added for every variable in the BOUNDS section  
+\end{itemize}
+After the generation the GLPK solver is invoked and the output is redirected to a file. The output file is the parsed for a valid output of for the error message for unbounded problems. In case of an optimal solution the option price, the timing of the solver and other information is added to a summary file \texttt{report.csv}. The tables in the Problem section has these csv data as tables. If instead of the option price N/A presented it means the solver did not find the optimal solution.
+
+\section{Testing}
+Testing can be carried out by invoking the test.py file This is not PyPi compliant testing only a validation for the code. By running the file a tree is built for a CRR tree example and one for the example we had in the lecture. The results should be 33.3333 for the CRR case and 0.09 for the lecture test. 
+
+\section{The problem}
+In the original problem we have a market which has three stocks and cash. The stocks are risky assets which means they have a prices in the different world states that depend on random variable \(\xi\). The time evaluation of the \$i\$-th stock can be calulated by the equation below. We assume the price processes are normalized and discounted in a sense that cash always has a price of one. 
+
+\begin{equation}
+\label{eq:price}
+S_{t+1}^i = 50 + 0.5 * S_{t}^i + \xi^i - \exp(-2.5)
+\end{equation}
+
+The code in this repository gives the proce of an exchange option for different world settings and maturites. The exchange option gives the right for the owner to exchange one of the first stock to one of the second stock at maturity. In practice the payoff of these options are usually payed as the difference in cash. The starting price of all stocks equal to 100 and \(\xi\) is a lognormal random variable with mean 1 and standard deviation of 2.
+
+\subsection{One period different number of branches}
+In this section we used a one level tree for the stock prices. The tree had different number of leaves (100, 1000, 10000 and 100000) and we tried two different lognormal variables for stock price generation.i The results can be fount in the following table. 
+
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{rrccr}
+      \textbf{Option price} & \textbf{Wall time [s]} & \textbf{Mean} & \textbf{Sigma} & \textbf{N Branch} \\
+      \hline
+      10.6220   & 0.2005           &    2 &     1 & 100 \\
+      11.7820   & 0.3549           &    2 &     1 & 1000\\
+      11.9835   & 5.9615           &    2 &     1 & 10000 \\
+      12.0706   & 923.1454         &    2 &     1 & 100000 \\
+      \hline
+      12.1502   & 0.3272           &    0 &     2 & 100 \\
+      12.1779   & 0.3892           &    0 &     2 & 1000 \\
+      12.1820   & 6.2872           &    0 &     2 & 10000 \\
+      12.1821   & 939.9210         &    0 &     2 & 100000 \\
+     \end{tabular}
+    \caption{One level tree}
+  \end{center}
+\end{table}
+
+The exchange option can not be sold for less than the optimized value since this is the cheapest self financing portfolio we can hedge the contingent claim with.  
+
+\subsection{Two period with 100 branches}
+In this taks we priced the same exchange option. The stock price tree in this case was two levels deep and every node has 100 children. Based on this there are 10000 leaves in the tree. The option prices were calculated for two different generating lognormal distributions. 
+
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{rrccr}
+      \textbf{Option price} & \textbf{Wall time [s]} & \textbf{Mean} & \textbf{Sigma} & \textbf{N Branch} \\
+      \hline
+      16.2196   & 7.3412           & 2    &     1 & 100 $\times$ 100 \\
+      17.8773   & 7.6326           & 0    &     2 & 100 $\times$ 100 \\
+     \end{tabular}
+    \caption{Two level tree with two different lognormal variable}
+  \end{center}
+\end{table}
+
+In this case the price of the contingent claim is higher than in the case of the one level tree. This is due to the fact that the deeper the tree the more "tailed" the price sitribution and we buy more rights with the same option.
+
+\subsection{Three level tree with same number of branches on every level}
+In this case a three level deep tree have been generated. In the table below we can see the number of branches on each level at the last column of the table. As it can be seen from the table the time to solution grows exponentially with the number of branches which matches the expectations. The GLPK solver can be invoked with millions of variables. In our case the 100 $\times$ 100 $\times$ 100 case approximetely 4 million variables and the solver seems working. After this the time to solution limited the tests with bigger systems.
+
+
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{rrccr}
+      \textbf{Option price} & \textbf{Wall time [s]} & \textbf{Mean} & \textbf{Sigma} & \textbf{N Branch} \\
+      \hline
+      N/A       & 0.2231           & 2    &     1 & 5  \\
+      N/A       & 0.4714           & 2    &     1 & 10 \\
+      13.4313   & 5.1865           & 2    &     1 & 20 \\
+      15.5355   & 54.1588          & 2    &     1 & 30 \\
+      16.6906   & 2302.9032        & 2    &     1 & 50 \\
+      17.2658   & 19836.8210       & 2    &     1 & 70 \\
+     \end{tabular}
+    \caption{Three level tree with same branch number on every level}
+  \end{center}
+\end{table}
+
+\subsection{Three level tree with different number of branches on each level}
+In this case different number of branches ($n_1$, $n_2$, $n_3$) have to be generated on every level of the tree. Besides that portfolio restructuring can't be done on the first and the second day. The results can be found in the table below for different $n_i$ values. It can be seen that the price of the derivative increases as the number of the leaf nodes increases. The same argument can be stated here as in the second example about the more rights we buy with the mode number of leaf nodes.
+ 
+
+\end{document}
