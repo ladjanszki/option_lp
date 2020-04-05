@@ -3,3 +3,7 @@ __pycache__/
 *.log
 *.out
 *.toc
+docs/
+examples/
+nohup.out
+results/
