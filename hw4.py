@@ -28,9 +28,8 @@ with open(path + 'report.csv','w') as report:
                         'Lognormal Sigma', 
                         'Files', 
                         'n1', 'n2', 'n3'])
-    #for row in reportLines:
-    #    csvWriter.writerow(row)
  
+    # Loops for lognormal(2,1)
     for idx1, n1 in enumerate(branches):
         for idx2, n2 in enumerate(branches):
             for idx3, n3 in enumerate(branches):
@@ -49,6 +48,7 @@ with open(path + 'report.csv','w') as report:
                 report.flush()
     
     
+    # Loops for lognormal(1,2)
     for idx1, n1 in enumerate(branches):
         for idx2, n2 in enumerate(branches):
             for idx3, n3 in enumerate(branches):
